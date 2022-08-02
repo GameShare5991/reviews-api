@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviewsapi-deployment
+  labels:
+    app: reviewsapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: reviewsapi
+  template:           
+    metadata:
+      labels:
+        app: reviewsapi
+    spec:
+      containers:
+        - name: reviewsapi
+          image: jackjackzhou/reviews-api
+          # imagePullPolicy: Never
+          ports:
+            - containerPort: 4005
+          volumeMounts:
+            - name: reviews-app-key
+              mountPath: “/app”
+              readOnly: true
+      volumes:
+        - name: reviews-app-key
+          secret:
+            secretName: reviews-app-key
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviews-service
+spec:
+  ports:
+  - port: 4005
+    targetPort: 4005
+  selector:
+    app: reviewsapi
+  type: LoadBalancer
