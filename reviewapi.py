@@ -103,28 +103,28 @@ def create():
     totalStars = "None"
     text = "None"
     date = "None"
-    id = "None"
-    data = {}
 
     if 'totalStars' in request_data:
         totalStars = request_data['totalStars']
-        data['totalStars'] = totalStars
 
     if 'text' in request_data:
         text = request_data['text']
-        data['text'] = text
 
     if 'date' in request_data:
         date = request_data['date']
-        data['date'] = date
 
-    if 'id' in request_data:
-        id = request_data['id']
-        data['id'] = id
-    
-    data = {"totalStars" : totalStars, "date" : date, "text" : text, "id" : id}
-    db.collection('reviews').add(data)
-    
+    review_data = {
+        'id' : "null", 
+        'text' : text, 
+        'date' : date, 
+        'totalStars' : totalStars, 
+    } 
+
+    _, doc = db.collection('reviews').add(review_data)  # initial data
+    db.collection('reviews').document(doc.id).update({  # document-related data
+        "id": doc.id
+    })
+
     return '',201
 
 if __name__ == '__main__':
